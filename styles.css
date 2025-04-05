@@ -11,16 +11,18 @@ body {
     min-height: 100vh;
     background-color: #f0f0f0;
     font-family: Arial, sans-serif;
+    overflow-x: hidden;
 }
 
 .calculator {
+    position: relative;
     width: 100%;
-    max-width: 320px; /* Фиксированный размер как у телефона */
+    max-width: 320px;
     background-color: #1c2526;
     border-radius: 20px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     overflow: hidden;
-    margin: 10px; /* Отступы для маленьких экранов */
+    margin: 10px;
 }
 
 .display {
@@ -31,14 +33,14 @@ body {
 }
 
 #history {
-    font-size: clamp(12px, 4vw, 16px); /* Адаптивный размер текста */
+    font-size: clamp(12px, 4vw, 16px);
     color: #a0a0a0;
     min-height: 20px;
     word-wrap: break-word;
 }
 
 #result {
-    font-size: clamp(24px, 8vw, 36px); /* Адаптивный размер результата */
+    font-size: clamp(24px, 8vw, 36px);
     margin-top: 10px;
     word-wrap: break-word;
 }
@@ -55,7 +57,7 @@ body {
     background-color: #3a4647;
     border: none;
     color: #fff;
-    font-size: clamp(18px, 6vw, 24px); /* Адаптивный размер кнопок */
+    font-size: clamp(18px, 6vw, 24px);
     padding: 15px;
     cursor: pointer;
     transition: background-color 0.2s;
@@ -82,7 +84,80 @@ body {
     background-color: #e08500;
 }
 
-/* Медиа-запросы для улучшения адаптивности */
+#history-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #ff9500;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #fff;
+    transition: background-color 0.2s;
+}
+
+#history-btn:hover {
+    background-color: #e08500;
+}
+
+.history-panel {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 280px;
+    height: 100%;
+    background-color: #2e3839;
+    color: #fff;
+    padding: 20px;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+    transition: right 0.3s ease;
+    overflow-y: auto;
+}
+
+.history-panel.open {
+    right: 0;
+}
+
+#close-btn {
+    background-color: #ff9500;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+    cursor: pointer;
+    color: #fff;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+#close-btn:hover {
+    background-color: #e08500;
+}
+
+.history-panel h3 {
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+#history-list {
+    list-style: none;
+    padding: 0;
+}
+
+#history-list li {
+    background-color: #3a4647;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    word-wrap: break-word;
+}
+
 @media (max-width: 340px) {
     .calculator {
         margin: 5px;
@@ -97,6 +172,6 @@ body {
 
 @media (min-width: 768px) {
     .calculator {
-        max-width: 320px; /* Ограничение размера для ПК */
+        max-width: 320px;
     }
 }
