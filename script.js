@@ -41,7 +41,7 @@ buttons.forEach(button => {
                     }
                 } else {
                     if (value === '.' && currentSegment.includes('.')) {
-                       
+                        // Do nothing if the segment already contains a dot
                     } else {
                         currentInput += value;
                         if (!isNaN(value) && currentInput.length > 1) {
@@ -81,14 +81,16 @@ buttons.forEach(button => {
             try {
                 const result = eval(currentInput);
                 if (typeof result === 'number' && isFinite(result)) {
-                    resultDisplay.textContent = result;
-                    history.push(`${currentInput} = ${result}`);
+                    const roundedResult = Math.round(result * 100) / 100; // Округление до двух знаков после запятой
+                    resultDisplay.textContent = roundedResult;
+                    history.push(`${currentInput} = ${roundedResult}`);
                     localStorage.setItem('calcHistory', JSON.stringify(history));
                     updateHistoryDisplay();
                     updateHistoryPanel();
-                    currentInput = result.toString();
+                    currentInput = roundedResult.toString();
                 }
             } catch (e) {
+                resultDisplay.textContent = 'Error';
             }
         }
     });
