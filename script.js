@@ -41,7 +41,7 @@ buttons.forEach(button => {
                     }
                 } else {
                     if (value === '.' && currentSegment.includes('.')) {
-                        // Не добавляем вторую точку в одном сегменте
+                       
                     } else {
                         currentInput += value;
                         if (!isNaN(value) && currentInput.length > 1) {
