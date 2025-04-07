@@ -9,7 +9,6 @@ const closeBtn = document.getElementById('close-btn');
 let currentInput = '';
 let history = JSON.parse(localStorage.getItem('calcHistory')) || [];
 
-// Загрузка истории при старте
 updateHistoryDisplay();
 updateHistoryPanel();
 
@@ -19,25 +18,57 @@ buttons.forEach(button => {
         const action = button.getAttribute('data-action');
 
         if (value) {
-            currentInput += value;
-            resultDisplay.textContent = currentInput;
+            const digitCount = (currentInput.match(/\d/g) || []).length;
+
+            if ((!isNaN(value) && digitCount < 10) || value === '(' || value === ')') {
+                if (value === '(') {
+                    if (currentInput.length > 0) {
+                        const lastChar = currentInput[currentInput.length - 1];
+                        if (/\d/.test(lastChar)) {
+                            currentInput += '*(';
+                        } else {
+                            currentInput += '(';
+                        }
+                    } else {
+                        currentInput += '(';
+                    }
+                } else {
+                    currentInput += value;
+                    if (!isNaN(value) && currentInput.length > 1) {
+                        const secondLastChar = currentInput[currentInput.length - 2];
+                        if (secondLastChar === ')') {
+                            currentInput = currentInput.slice(0, -1) + '*' + value;
+                        }
+                    }
+                }
+
+                resultDisplay.textContent = currentInput;
+            }
         } else if (action === 'operator') {
-            // Заменяем символы для eval
             let operator = button.textContent;
             if (operator === '×') operator = '*';
-            if (operator === '/') operator = '/';
+            if (operator === '÷') operator = '/';
             if (operator === '+') operator = '+';
             if (operator === '-') operator = '-';
-            currentInput += operator;
+
+            if (currentInput.length > 0) {
+                const lastChar = currentInput[currentInput.length - 1];
+                if (['+', '-', '*', '/'].includes(lastChar)) {
+                    currentInput = currentInput.slice(0, -1) + operator;
+                } else {
+                    currentInput += operator;
+                }
+            } else {
+                currentInput += operator;
+            }
+
             resultDisplay.textContent = currentInput;
         } else if (action === 'clear') {
-            currentInput = '';
-            resultDisplay.textContent = '0';
+            currentInput = currentInput.slice(0, -1);
+            resultDisplay.textContent = currentInput || '0';
         } else if (action === 'equals') {
             try {
-                // Проверяем корректность выражения
                 const result = eval(currentInput);
-                // Проверяем, является ли результат числом и конечным
                 if (typeof result === 'number' && isFinite(result)) {
                     resultDisplay.textContent = result;
                     history.push(`${currentInput} = ${result}`);
@@ -46,15 +77,12 @@ buttons.forEach(button => {
                     updateHistoryPanel();
                     currentInput = result.toString();
                 }
-                // Если результат некорректен (NaN, Infinity), ничего не делаем
             } catch (e) {
-                // При ошибке (например, синтаксической) ничего не меняем
             }
         }
     });
 });
 
-// Открытие/закрытие панели
 historyBtn.addEventListener('click', () => {
     historyPanel.classList.add('open');
 });
@@ -63,7 +91,6 @@ closeBtn.addEventListener('click', () => {
     historyPanel.classList.remove('open');
 });
 
-// Обновление истории на экране (последний результат)
 function updateHistoryDisplay() {
     if (history.length > 0) {
         historyDisplay.textContent = history[history.length - 1];
@@ -72,7 +99,6 @@ function updateHistoryDisplay() {
     }
 }
 
-// Обновление полной истории в боковой панели
 function updateHistoryPanel() {
     historyList.innerHTML = '';
     history.forEach(item => {
