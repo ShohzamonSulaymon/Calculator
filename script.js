@@ -18,9 +18,16 @@ buttons.forEach(button => {
         const action = button.getAttribute('data-action');
 
         if (value) {
-            const digitCount = (currentInput.match(/\d/g) || []).length;
+            const lastOperatorIndex = Math.max(
+                currentInput.lastIndexOf('+'),
+                currentInput.lastIndexOf('-'),
+                currentInput.lastIndexOf('*'),
+                currentInput.lastIndexOf('/')
+            );
+            const currentSegment = lastOperatorIndex === -1 ? currentInput : currentInput.slice(lastOperatorIndex + 1);
+            const digitCount = (currentSegment.match(/\d/g) || []).length;
 
-            if ((!isNaN(value) && digitCount < 10) || value === '(' || value === ')') {
+            if ((!isNaN(value) && digitCount < 10) || value === '(' || value === ')' || value === '.') {
                 if (value === '(') {
                     if (currentInput.length > 0) {
                         const lastChar = currentInput[currentInput.length - 1];
@@ -33,11 +40,15 @@ buttons.forEach(button => {
                         currentInput += '(';
                     }
                 } else {
-                    currentInput += value;
-                    if (!isNaN(value) && currentInput.length > 1) {
-                        const secondLastChar = currentInput[currentInput.length - 2];
-                        if (secondLastChar === ')') {
-                            currentInput = currentInput.slice(0, -1) + '*' + value;
+                    if (value === '.' && currentSegment.includes('.')) {
+                        // Не добавляем вторую точку в одном сегменте
+                    } else {
+                        currentInput += value;
+                        if (!isNaN(value) && currentInput.length > 1) {
+                            const secondLastChar = currentInput[currentInput.length - 2];
+                            if (secondLastChar === ')') {
+                                currentInput = currentInput.slice(0, -1) + '*' + value;
+                            }
                         }
                     }
                 }
